@@ -67,7 +67,7 @@ def main(argv):
 
     # ToDo: move all of this to a conf file
     ROOTPATH=os.getcwd()
-    p("Using {ROOTPATH} as ROOT path", False)
+    p(f"Using {ROOTPATH} as ROOT path", False)
 
     TESTBED_PATH = ROOTPATH + '/testbed'
     CONFIG_PATH = ROOTPATH + '/config/'
