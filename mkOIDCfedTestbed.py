@@ -66,13 +66,13 @@ def main(argv):
     WRITETOLOG = False
 
     # ToDo: move all of this to a conf file
-    #ROOTPATH=os.getcwd()
     ROOTPATH=os.getcwd()
     p(f"Using {ROOTPATH} as ROOT path", False)
+    TESTBED_PATH = ROOTPATH + '/testbed/'
+    KEYS_PATH = TESTBED_PATH + '/keys/'    
     CONFIG_PATH = ROOTPATH + '/config/'
     INPUT_PATH = ROOTPATH + '/feeds/'
-    OUTPUT_PATH = ROOTPATH + '/var/www/oidcfed/'
-   
+
     # a local file contains all the secrets we need to keep secure. The template for this file is found in config/local.json.template
     localConf = "config/testbed_config.json"
     config = loadJSON(localConf)
@@ -85,10 +85,8 @@ def main(argv):
     MAC_KEY=config["mac_key"]
     DOCKER_CONTAINER_NAME = config["docker_container_name_template"]
     FETCHEDUGAINURL = config["load_edugain_ras"]
-
-    TESTBED_PATH = config["testbed_basedir"]
-    KEYS_PATH = TESTBED_PATH + '/keys/'
-    p(f"Using {TESTBED_PATH} as testbed path", False)
+    OUTPUT_PATH = config["testbed_basedir"]
+    p(f"Using {OUTPUT_PATH} as testbed deployment path", False)
 
     
     #
@@ -191,7 +189,7 @@ def main(argv):
         tb['services'][ra] = {
             "image": "'myoidc/oidfed-gota'",
             "networks": {"caddy": ''},
-            "volumes": [TESTBED_PATH+'/' +ra+ '/data:/data'],
+            "volumes": [OUTPUT_PATH+'/' +ra+ '/data:/data'],
             "expose": ["8765"],
             "stop_grace_period": "'500ms'"
         }
@@ -202,7 +200,7 @@ def main(argv):
             tb['services'][tmi] = {
                 "image": "'myoidc/oidfed-gota'",
                 "networks": {"caddy": ''},
-                "volumes": [TESTBED_PATH+'/' +tmi+ '/data:/data'],
+                "volumes": [OUTPUT_PATH+'/' +tmi+ '/data:/data'],
                 "expose": ["8765"],
                 "stop_grace_period": "'500ms'"
             }
@@ -213,8 +211,8 @@ def main(argv):
             "image": "'myoidc/oidfed-gorp'",
             "networks": {"caddy": ''},
             "volumes": [
-                TESTBED_PATH+'/' +rp+ '/data:/data',
-                TESTBED_PATH+'/' +rp+ '/data/config.yaml:/config.yaml:ro'
+                OUTPUT_PATH+'/' +rp+ '/data:/data',
+                OUTPUT_PATH+'/' +rp+ '/data/config.yaml:/config.yaml:ro'
             ],
             "expose": ["8765"],
             "stop_grace_period": "'500ms'"
@@ -225,9 +223,9 @@ def main(argv):
             "networks": {"caddy": ''},
             "ports": ["'80:80'", "'443:443'"],
             "volumes": [
-                TESTBED_PATH + "/caddy/Caddyfile:/etc/caddy/Caddyfile",
-                TESTBED_PATH + "/caddy/data:/data",
-                TESTBED_PATH + "/caddy/config:/config"
+                OUTPUT_PATH + "/caddy/Caddyfile:/etc/caddy/Caddyfile",
+                OUTPUT_PATH + "/caddy/data:/data",
+                OUTPUT_PATH + "/caddy/config:/config"
             ],
             "expose": ["8765"],
             "stop_grace_period": "'500ms'"
@@ -237,8 +235,8 @@ def main(argv):
             "image": "'nginx:1-alpine'",
             "networks": {"caddy": ''},
             "volumes": [
-                TESTBED_PATH + "/testbed/conf/default.conf:/etc/nginx/conf.d/default.conf",
-                TESTBED_PATH + "/testbed/data/html/:/var/www/html",
+                OUTPUT_PATH + "/testbed/conf/default.conf:/etc/nginx/conf.d/default.conf",
+                OUTPUT_PATH + "/testbed/data/html/:/var/www/html",
             ],
             "expose": ["8765"],
             "stop_grace_period": "'500ms'"
@@ -248,8 +246,8 @@ def main(argv):
             "image": "'nginx:1-alpine'",
             "networks": {"caddy": ''},
             "volumes": [
-                TESTBED_PATH + "/leafs/conf/default.conf:/etc/nginx/conf.d/default.conf",
-                TESTBED_PATH + "/leafs/data/html/:/var/www/html",
+                OUTPUT_PATH + "/leafs/conf/default.conf:/etc/nginx/conf.d/default.conf",
+                OUTPUT_PATH + "/leafs/data/html/:/var/www/html",
             ],
             "expose": ["8765"],
             "stop_grace_period": "'500ms'"
@@ -285,7 +283,7 @@ def main(argv):
         tmo.to_yaml(TESTBED_PATH+'/' +this_tmo+ '/data/tm-delegation.yaml')
 
         # Now run the TMO docker container to generate delegation jwt on the fly
-        docker_cmd = 'docker run --rm --user "1000":"1000" -v "'+ TESTBED_PATH+'/' +this_tmo+'/data:/refeds" myoidc/oidfed-gota /tacli delegation --json /'+this_tmo+'/tm-delegation.yaml' 
+        docker_cmd = 'docker run --rm --user "1000":"1000" -v "'+ OUTPUT_PATH+'/' +this_tmo+'/data:/refeds" myoidc/oidfed-gota /tacli delegation --json /'+this_tmo+'/tm-delegation.yaml' 
         try:
             os.popen(docker_cmd)
         except:
