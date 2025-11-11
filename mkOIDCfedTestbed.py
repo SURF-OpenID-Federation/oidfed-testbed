@@ -67,17 +67,14 @@ def main(argv):
 
     # ToDo: move all of this to a conf file
     #ROOTPATH=os.getcwd()
-    ROOTPATH="."
+    ROOTPATH=os.getcwd()
     p(f"Using {ROOTPATH} as ROOT path", False)
-
-    TESTBED_PATH = ROOTPATH + '/testbed'
     CONFIG_PATH = ROOTPATH + '/config/'
     INPUT_PATH = ROOTPATH + '/feeds/'
     OUTPUT_PATH = ROOTPATH + '/var/www/oidcfed/'
-    KEYS_PATH = TESTBED_PATH + '/keys/'
-    
+   
     # a local file contains all the secrets we need to keep secure. The template for this file is found in config/local.json.template
-    localConf = CONFIG_PATH + 'testbed_config.json'
+    localConf = "config/testbed_config.json"
     config = loadJSON(localConf)
     pj(config)
 
@@ -88,6 +85,9 @@ def main(argv):
     MAC_KEY=config["mac_key"]
     DOCKER_CONTAINER_NAME = config["docker_container_name_template"]
     FETCHEDUGAINURL = config["load_edugain_ras"]
+
+    TESTBED_PATH = config["testbed_basedir"]
+    KEYS_PATH = TESTBED_PATH + '/keys/'
     
     #
     # Deployment Configuration
@@ -187,7 +187,7 @@ def main(argv):
         tb['services'][ra] = {
             "image": "'myoidc/oidfed-gota'",
             "networks": {"caddy": ''},
-            "volumes": [ ra+ '/data:/data'],
+            "volumes": [TESTBED_PATH+'/' +ra+ '/data:/data'],
             "expose": ["8765"],
             "stop_grace_period": "'500ms'"
         }
@@ -198,7 +198,7 @@ def main(argv):
             tb['services'][tmi] = {
                 "image": "'myoidc/oidfed-gota'",
                 "networks": {"caddy": ''},
-                "volumes": [tmi + '/data:/data'],
+                "volumes": [TESTBED_PATH+'/' +tmi+ '/data:/data'],
                 "expose": ["8765"],
                 "stop_grace_period": "'500ms'"
             }
@@ -209,8 +209,8 @@ def main(argv):
             "image": "'myoidc/oidfed-gorp'",
             "networks": {"caddy": ''},
             "volumes": [
-                rp + '/data:/data',
-                rp + '/data/config.yaml:/config.yaml:ro'
+                TESTBED_PATH+'/' +rp+ '/data:/data',
+                TESTBED_PATH+'/' +rp+ '/data/config.yaml:/config.yaml:ro'
             ],
             "expose": ["8765"],
             "stop_grace_period": "'500ms'"
@@ -221,9 +221,9 @@ def main(argv):
             "networks": {"caddy": ''},
             "ports": ["'80:80'", "'443:443'"],
             "volumes": [
-                "caddy/Caddyfile:/etc/caddy/Caddyfile",
-                "caddy/data:/data",
-                "caddy/config:/config"
+                TESTBED_PATH + "/caddy/Caddyfile:/etc/caddy/Caddyfile",
+                TESTBED_PATH + "/caddy/data:/data",
+                TESTBED_PATH + "/caddy/config:/config"
             ],
             "expose": ["8765"],
             "stop_grace_period": "'500ms'"
@@ -233,8 +233,8 @@ def main(argv):
             "image": "'nginx:1-alpine'",
             "networks": {"caddy": ''},
             "volumes": [
-                "testbed/conf/default.conf:/etc/nginx/conf.d/default.conf",
-                "testbed/data/html/:/var/www/html",
+                TESTBED_PATH + "/testbed/conf/default.conf:/etc/nginx/conf.d/default.conf",
+                TESTBED_PATH + "/testbed/data/html/:/var/www/html",
             ],
             "expose": ["8765"],
             "stop_grace_period": "'500ms'"
@@ -244,8 +244,8 @@ def main(argv):
             "image": "'nginx:1-alpine'",
             "networks": {"caddy": ''},
             "volumes": [
-                "leafs/conf/default.conf:/etc/nginx/conf.d/default.conf",
-                "leafs/data/html/:/var/www/html",
+                TESTBED_PATH + "/leafs/conf/default.conf:/etc/nginx/conf.d/default.conf",
+                TESTBED_PATH + "/leafs/data/html/:/var/www/html",
             ],
             "expose": ["8765"],
             "stop_grace_period": "'500ms'"
