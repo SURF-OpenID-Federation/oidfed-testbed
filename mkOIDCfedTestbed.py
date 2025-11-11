@@ -187,7 +187,7 @@ def main(argv):
         tb['services'][ra] = {
             "image": "'myoidc/oidfed-gota'",
             "networks": {"caddy": ''},
-            "volumes": [TESTBED_PATH+'/' +ra+ '/data:/data'],
+            "volumes": [ ra+ '/data:/data'],
             "expose": ["8765"],
             "stop_grace_period": "'500ms'"
         }
@@ -198,7 +198,7 @@ def main(argv):
             tb['services'][tmi] = {
                 "image": "'myoidc/oidfed-gota'",
                 "networks": {"caddy": ''},
-                "volumes": [TESTBED_PATH+'/' +tmi+ '/data:/data'],
+                "volumes": [tmi + '/data:/data'],
                 "expose": ["8765"],
                 "stop_grace_period": "'500ms'"
             }
@@ -209,8 +209,8 @@ def main(argv):
             "image": "'myoidc/oidfed-gorp'",
             "networks": {"caddy": ''},
             "volumes": [
-                TESTBED_PATH+'/' +rp+ '/data:/data',
-                TESTBED_PATH+'/' +rp+ '/data/config.yaml:/config.yaml:ro'
+                rp + '/data:/data',
+                rp + '/data/config.yaml:/config.yaml:ro'
             ],
             "expose": ["8765"],
             "stop_grace_period": "'500ms'"
@@ -221,9 +221,9 @@ def main(argv):
             "networks": {"caddy": ''},
             "ports": ["'80:80'", "'443:443'"],
             "volumes": [
-                TESTBED_PATH + "/caddy/Caddyfile:/etc/caddy/Caddyfile",
-                TESTBED_PATH + "/caddy/data:/data",
-                TESTBED_PATH + "/caddy/config:/config"
+                "caddy/Caddyfile:/etc/caddy/Caddyfile",
+                "caddy/data:/data",
+                "caddy/config:/config"
             ],
             "expose": ["8765"],
             "stop_grace_period": "'500ms'"
@@ -233,8 +233,8 @@ def main(argv):
             "image": "'nginx:1-alpine'",
             "networks": {"caddy": ''},
             "volumes": [
-                TESTBED_PATH + "/testbed/conf/default.conf:/etc/nginx/conf.d/default.conf",
-                TESTBED_PATH + "/testbed/data/html/:/var/www/html",
+                "testbed/conf/default.conf:/etc/nginx/conf.d/default.conf",
+                "testbed/data/html/:/var/www/html",
             ],
             "expose": ["8765"],
             "stop_grace_period": "'500ms'"
@@ -244,8 +244,8 @@ def main(argv):
             "image": "'nginx:1-alpine'",
             "networks": {"caddy": ''},
             "volumes": [
-                TESTBED_PATH + "/leafs/conf/default.conf:/etc/nginx/conf.d/default.conf",
-                TESTBED_PATH + "/leafs/data/html/:/var/www/html",
+                "leafs/conf/default.conf:/etc/nginx/conf.d/default.conf",
+                "leafs/data/html/:/var/www/html",
             ],
             "expose": ["8765"],
             "stop_grace_period": "'500ms'"
