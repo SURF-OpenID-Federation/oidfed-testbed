@@ -33,9 +33,11 @@ def main():
     args = parser.parse_args()
 
     env_vars = load_env_vars(args.i)
-    print(env_vars)
+    print(f"✅ Configuration read from env file: {args.i}")
+    print(json.dumps(env_vars, indent=4, sort_keys=False))
 
     if args.t and os.path.exists(args.t):
+        print(f"✅ Using template file file: {args.t}")
         with open(args.t, "r") as tmpl:
             template_data = json.load(tmpl)
         final_data = merge_env_into_template(template_data, env_vars)
@@ -46,6 +48,7 @@ def main():
         json.dump(final_data, out, indent=4)
 
     print(f"✅ Configuration written to: {args.o}")
+    print(json.dumps(final_data, indent=4, sort_keys=False))
 
 if __name__ == "__main__":
     main()
