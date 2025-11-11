@@ -88,6 +88,8 @@ def main(argv):
 
     TESTBED_PATH = config["testbed_basedir"]
     KEYS_PATH = TESTBED_PATH + '/keys/'
+    p(f"Using {TESTBED_PATH} as testbed path", False)
+
     
     #
     # Deployment Configuration
@@ -146,6 +148,8 @@ def main(argv):
     #
     # Make sure we have all config dirs
     # TODO: make function for this?
+    # Testbed deploy dir
+    os.makedirs(TESTBED_PATH, mode=0o777, exist_ok=True)
     # Caddy proxy 
     os.makedirs(TESTBED_PATH+'/caddy', mode=0o777, exist_ok=True)
     # A static server for a testbed overview page
