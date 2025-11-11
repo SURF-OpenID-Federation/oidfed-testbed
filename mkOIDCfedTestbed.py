@@ -66,7 +66,8 @@ def main(argv):
     WRITETOLOG = False
 
     # ToDo: move all of this to a conf file
-    ROOTPATH=os.getcwd()
+    #ROOTPATH=os.getcwd()
+    ROOTPATH="."
     p(f"Using {ROOTPATH} as ROOT path", False)
 
     TESTBED_PATH = ROOTPATH + '/testbed'
