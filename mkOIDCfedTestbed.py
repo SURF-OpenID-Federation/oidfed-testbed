@@ -86,6 +86,11 @@ def main(argv):
     DOCKER_CONTAINER_NAME = config["docker_container_name_template"]
     FETCHEDUGAINURL = config["load_edugain_ras"]
     OUTPUT_PATH = config["testbed_basedir"]
+    SET_UID=config["set_uid"]
+    SET_GID=config["set_gid"]
+
+
+
     p(f"Using {OUTPUT_PATH} as testbed deployment path", False)
 
     

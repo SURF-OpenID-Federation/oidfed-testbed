@@ -7,5 +7,7 @@
     "mac_key": "",
     "email": "",
     "docker_container_name_template": "testbed-~~container_name~~-1",
-    "load_edugain_ras": false
+    "load_edugain_ras": false,
+    "set_uid": 1000,
+    "set_gid": 1000
 }
